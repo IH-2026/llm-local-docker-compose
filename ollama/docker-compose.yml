@@ -1,0 +1,38 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    # Uncomment the lines below if you have NVIDIA GPU + Container Toolkit installed
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # Optional: auto-pull models on first start
+  ollama-pull:
+    image: ollama/ollama
+    container_name: ollama-pull
+    volumes:
+      - ollama:/root/.ollama
+    entrypoint: >
+      sh -c "
+        sleep 5 &&
+        ollama pull qwen2.5-coder:7b &&
+        ollama pull qwen2.5-coder:3b
+      "
+    depends_on:
+      ollama:
+        condition: service_healthy
+    profiles: ["setup"]
+    restart: "no"
+
+volumes:
+  ollama:
