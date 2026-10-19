@@ -1,0 +1,43 @@
+services:
+
+  cogvideo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: cogvideo
+
+    working_dir: /workspace
+    stop_grace_period: 30s
+
+    volumes:
+      - ./prompts:/workspace/prompts:ro
+      - ./output:/workspace/output
+      - ./cache:/workspace/cache
+
+    environment:
+      MODEL_ID: ${MODEL_ID:-THUDM/CogVideoX-2b}
+      PROMPT_FILE: ${PROMPT_FILE:-/workspace/prompts/default.txt}
+      OUTPUT_DIR: /workspace/output
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+
+      HF_HOME: /workspace/cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /workspace/cache/huggingface/hub
+      TRANSFORMERS_CACHE: /workspace/cache/huggingface/hub
+
+      PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+
+    command: ["python3", "-u", "-m", "cogvideox"]
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+
+    stdin_open: true
+    tty: true
