@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[[source]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+verify_ssl = true
+
+[packages]
+accelerate = ">=0.33.0"
+diffusers = ">=0.30.1"
+imageio = ">=2.34.0"
+imageio-ffmpeg = ">=0.5.1"
+protobuf = "*"
+sentencepiece = "*"
+torch = {version = "*", index = "pytorch-cu124"}
+torchaudio = {version = "*", index = "pytorch-cu124"}
+torchvision = {version = "*", index = "pytorch-cu124"}
+transformers = ">=4.44.0"
+
+[dev-packages]
+build = "*"
+pytest = "*"
+ruff = "*"
+
+[requires]
+python_version = "3.10"
